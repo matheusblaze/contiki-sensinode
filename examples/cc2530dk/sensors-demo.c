@@ -99,7 +99,7 @@ PROCESS_THREAD(buttons_test_process, ev, data)
     sensor = (struct sensors_sensor *)data;
     if(sensor == &button_sensor) {
       PRINTF("Button Press\n");
-      leds_toggle(LEDS_GREEN);
+      leds_toggle(LEDS_YELLOW);
     }
   }
 
@@ -186,6 +186,11 @@ PROCESS_THREAD(sensors_test_process, ev, data)
       rv = sensor->value(ADC_SENSOR_TYPE_AIN6);
       if(rv != -1) {
     	  PRINTF("AIN6 Reading=%d\n", rv);
+      }
+
+      rv = sensor->value();
+      if(rv != -1){
+
       }
 
       /*
