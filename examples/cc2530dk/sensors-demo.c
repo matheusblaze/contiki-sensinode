@@ -188,16 +188,6 @@ PROCESS_THREAD(sensors_test_process, ev, data)
     	  PRINTF("AIN6 Reading=%d\n", rv);
       }
 
-      rv = sensor->value();
-      if(rv != -1){
-
-      }
-
-      /*
-       * Battery Voltage - ToDo
-       *   rv = sensor->value(ADC_SENSOR_TYPE_BATTERY);
-       */
-
       leds_off(LEDS_RED);
     }
     etimer_reset(&et);
