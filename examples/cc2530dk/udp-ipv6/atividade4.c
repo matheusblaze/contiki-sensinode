@@ -89,6 +89,7 @@ static void tcpip_handler ( void )
 			break ;
 		}
 		case LED_GET_STATE :
+			PRINTF("RECEBE LED_GET_STATE");
 			memset(buf, 0, MAX_PAYLOAD_LEN);
 			uip_ipaddr_copy (& g_conn -> ripaddr , & UIP_IP_BUF -> srcipaddr );
 			g_conn -> rport = UIP_UDP_BUF -> destport ;
@@ -101,14 +102,20 @@ static void tcpip_handler ( void )
 			PRINTF("]:% u\n", UIP_HTONS (g_conn -> rport ));
 			break;
 		case LED_SET_STATE:
+			PRINTF("RECEBE LED_SET_STATE\n");
+			leds_off(LEDS_ALL);
 			leds_on(dados[1]);
+			memset(buf, 0, MAX_PAYLOAD_LEN);
+		    buf[0] = LED_STATE;
+		    buf[1] = dados[1];
+		    uip_udp_packet_send(g_conn, buf, 2);
+		    PRINTF("Enviou LED_STATE\n\n");
 
-			PRINTF("LED_SET_STATE\n");
-			break;
+		    break;
 		case LED_TOGGLE_REQUEST:
-			leds_on(dados[1]);
+			PRINTF("RECEBE LED_TOGGLE_REQUEST\n");
 
-			PRINTF("LED_TOGGLE_REQUEST\n");
+			leds_toggle(dados[1]);
 			break;
 		default :
 		{
@@ -143,9 +150,9 @@ timeout_handler(void)
   else
   {
 	  memset(buf, 0, MAX_PAYLOAD_LEN);
-	  buf[0]=LED_TOGGLE_REQUEST;
+	  buf[0] = LED_TOGGLE_REQUEST;
   	  uip_udp_packet_send(g_conn, buf, 1);
-  	  PRINTF("Cliente Para: [");
+  	  PRINTF("TIMEOUT: Cliente Para: [");
   	  PRINT6ADDR(&g_conn->ripaddr);
   	  PRINTF("]: %u\n",UIP_HTONS(g_conn->rport));
 
@@ -164,6 +171,7 @@ print_local_addresses(void)
     if(uip_ds6_if.addr_list[i].isused && (state == ADDR_TENTATIVE || state == ADDR_PREFERRED)) {
       PRINTF("  \n");
       PRINT6ADDR(&uip_ds6_if.addr_list[i].ipaddr);
+      PRINTF("\n");
       if(state == ADDR_TENTATIVE) {
         uip_ds6_if.addr_list[i].state = ADDR_PREFERRED;
       }
@@ -193,7 +201,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
          UIP_HTONS(l_conn->lport), UIP_HTONS(l_conn->rport));
 
   //uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0212, 0x4b00, 0x07b9, 0x5e8d);
-  uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0212, 0x4b00, 0x07b9, 0x5D35);
+  uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0x0212, 0x4b00, 0x04e9, 0x043b);
 
   g_conn = udp_new(&ipaddr, UIP_HTONS(GLOBAL_CONN_PORT), NULL);
 
